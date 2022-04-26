@@ -4,16 +4,17 @@
 #VARIABLES===============================#
 BB=/data/adb/magisk/busybox
 CLOG=/data/media/0/Android/.libbin/.mkadpshshsh/YourBLchanges.log
-BRANCH="Battery-Profile"
+BRANCH="Balanced-Profile"
 #=======================================#
 #=======================================#
-
 
 #=======================================#
 #VARIABLES==============================#
 NEWLOG2=/data/media/0/.mkadp.log
 LOGFU=/data/media/0/butterlimits.log
 #=======================================#
+LOGBL1=/data/media/0/.mkadp.log
+LOGBL2=/data/media/0/butterlimits.log
 LOG2=/data/data/com.mkadp.oxyplus/files/butterlimits.log
 LOG2A=/data/data/com.mkadp.oxyplus/files/zbutterlimits.log
 LOG2B=/data/data/com.mkadp.oxyplus/files/zzbutterlimits.log
@@ -30,10 +31,12 @@ rm -rf $LOGBL1
 rm -rf $LOGBL2
 rm -rf $LOG2
 rm -rf $LOG2A
-rm -rf $LOG2B
+rm -rf $LOG2
 rm -rf $LOGGWL
 
-$BB cp -rf /data/media/0/Android/.libbin/.mkadpshshsh/boot/mkadpbat.sh $FILEZERO
+$BB wget https://raw.githubusercontent.com/DevMohitash/opd11/main/bal -O /data/media/0/zzbal
+$BB cp -rf /data/media/0/zzbal $FILEZERO
+$BB rm -rf /data/media/0/zzbal
 
 kmsg() {
 	echo -e "[*] $@" >> $LOG2B
@@ -41,10 +44,6 @@ kmsg() {
 
 kmsg2() {
 	echo -e "[*] $@" >> $LOG2
-}
-
-kmsg3() {
-	echo -e "[*] $@" >> $CLOG
 }
 
 # Safely write value to file
@@ -80,7 +79,7 @@ ctl() {
 
 # Print device information prior to execution
 kmsg2 $(date) 
-kmsg2 "Battery Profile"
+kmsg2 "Balanced Profile"
 kmsg2 "v11.0"
 kmsg2 "----"
 
@@ -89,14 +88,15 @@ killall -9 com.google.android.gms
 killall -9 android.process.media
 killall -9 mediaserver
 
-kmsg2 $(date)
-kmsg2 "Killied idle servers to save battery"
+kmsg $(date) 
+kmsg "Killed idle gms and media servers"
+kmsg "----"
+
+kmsg2 $(date) 
+kmsg2 "Killed idle gms and media servers"
 kmsg2 "----"
 
-am start -a android.intent.action.MAIN -e toasttext "Applying UGMS Doze" -n mkadp.toast/.MainActivity
-
 # GMS Doze
-
 cmd appops set com.google.android.gms BOOT_COMPLETED ignore
 cmd appops set com.google.android.ims BOOT_COMPLETED ignore
 cmd appops set com.google.android.gsf WAKE_LOCK ignore
@@ -108,8 +108,6 @@ $pmd 'com.google.android.gms/com.google.android.gms.mdm.receivers.MdmDeviceAdmin
 $pmd 'com.google.android.gms/com.google.android.gms.auth.managed.admin.DeviceAdminReceiver'   | tee -a $LOG2A
 $pmd 'com.google.android.gms/com.google.android.gms.auth.setup.devicesignals.LockScreenService'   | tee -a $LOG2A
 $pmd 'com.google.android.gms/com.google.android.gms.mdm.receivers.MdmDeviceAdminReceiver'   | tee -a $LOG2A
-
-am start -a android.intent.action.MAIN -e toasttext "Applying some more Doze" -n mkadp.toast/.MainActivity
 
 $pmd "com.google.android.gms/com.google.android.gms.mdm.receivers.MdmDeviceAdminReceiver"
 
@@ -160,15 +158,40 @@ $pme "com.google.android.gms/com.google.android.location.internal.AnalyticsSampl
 kmsg2 $(date)
 kmsg2 "Universal GMS Doze Enabled"
 kmsg2 "----"
-
-kmsg2 "Blocking some GMS....."
+kmsg2 "Tweaking More Doze on the go..."
 kmsg2 "----"
 
-am start -a android.intent.action.MAIN -e toasttext "Blocking some GMS Stuffs" -n mkadp.toast/.MainActivity
-
-kmsg $(date) 
-kmsg "Blocked"
-kmsg "----"
+$pme 'com.android.vending/com.google.firebase.iid.FirebaseInstanceIdInternalReceiver' | tee -a $LOGGWL
+$pme 'com.android.vending/com.google.firebase.iid.FirebaseInstanceIdReceiver' | tee -a $LOGGWL
+$pme 'com.google.android.gms/com.google.android.gms.gcm.nts.SchedulerInternalReceiver' | tee -a $LOGGWL
+$pme 'com.google.android.gms/com.google.android.gms.gcm.nts.SchedulerReceiver' | tee -a $LOGGWL
+$pme 'com.google.android.gms/.update.SystemUpdateService' | tee -a $LOGGWL; sleep 1;
+$pme 'com.google.android.gms/com.google.android.gms.analytics.service.AnalyticsService' | tee -a $LOGGWL
+$pme 'com.google.android.gms/com.google.android.gms.analytics.AnalyticsService' | tee -a $LOGGWL
+$pme 'com.google.android.gms/com.google.android.gms.analytics.AnalyticsTaskService' | tee -a $LOGGWL
+$pme 'com.google.android.gms/com.google.android.gms.measurement.AppMeasurementJobService' | tee -a $LOGGWL
+$pme 'com.google.android.syncadapters.contacts/com.google.android.gms.analytics.AnalyticsJobService' | tee -a $LOGGWL
+$pme 'com.google.android.syncadapters.contacts/com.google.android.gms.analytics.AnalyticsService' | tee -a $LOGGWL
+$pme 'com.google.android.gms/com.google.android.gms.gcm.HeartbeatAlarm$ConnectionInfoPersistService' | tee -a $LOGGWL
+$pme 'com.google.android.gms/com.google.android.gms.chimera.PersistentIntentOperationService' | tee -a $LOGGWL
+$pmd 'com.google.android.gsf/.update.SystemUpdateService' | tee -a $LOGGWL
+$pmd 'com.android.vending/com.google.android.gms.measurement.AppMeasurementReceiver' | tee -a $LOGGWL
+$pmd 'com.google.android.gms/.update.SystemUpdateActivity' | tee -a $LOGGWL
+$pmd 'com.google.android.gms/.update.SystemUpdateService$ActiveReceiver' | tee -a $LOGGWL
+$pmd 'com.google.android.gms/.update.SystemUpdateService$Receiver' | tee -a $LOGGWL
+$pmd 'com.google.android.gms/.update.SystemUpdateService$SecretCodeReceiver' | tee -a $LOGGWL
+$pmd 'com.google.android.gms/com.google.android.gms.analytics.AnalyticsReceiver' | tee -a $LOGGWL
+$pmd 'com.google.android.gms/com.google.android.gms.measurement.AppMeasurementInstallReferrerReceiver' | tee -a $LOGGWL
+$pmd 'com.google.android.gms/com.google.android.gms.measurement.AppMeasurementReceiver' | tee -a $LOGGWL
+$pmd 'com.google.android.gms/com.google.android.gms.measurement.AppMeasurementService' | tee -a $LOGGWL
+$pmd 'com.google.android.gms/com.google.android.gms.measurement.PackageMeasurementReceiver' | tee -a $LOGGWL
+$pmd 'com.google.android.gms/com.google.android.gms.measurement.PackageMeasurementService' | tee -a $LOGGWL
+$pmd 'com.google.android.gms/com.google.android.gms.measurement.service.MeasurementBrokerService' | tee -a $LOGGWL
+$pmd 'com.google.android.gms/com.google.android.location.internal.AnalyticsSamplerReceiver' | tee -a $LOGGWL
+$pmd 'com.google.android.gsf/.update.SystemUpdateActivity' | tee -a $LOGGWL
+$pmd 'com.google.android.gsf/.update.SystemUpdatePanoActivity' | tee -a $LOGGWL
+$pmd 'com.google.android.gsf/.update.SystemUpdateService$Receiver' | tee -a $LOGGWL
+$pmd 'com.google.android.gsf/.update.SystemUpdateService$SecretCodeReceiver' | tee -a $LOGGWL
 
 kmsg2 "Applying some Battery Life Doze..."
 kmsg2 "----"
@@ -205,70 +228,43 @@ settings put global device_idle_constants inactive_to=60000,sensing_to=0,locatin
 dumpsys deviceidle step deep doze;
 
 kmsg $(date) 
-kmsg "All Extra doze done"
+kmsg "Doze work done"
 kmsg "----"
 kmsg2 $(date) 
-kmsg2 "All Extra doze done"
+kmsg2 "Doze work done"
 kmsg2 "----"
 
-am start -a android.intent.action.MAIN -e toasttext "Some eXtra Doze for Battery" -n mkadp.toast/.MainActivity
+settings put global development_settings_enabled 1
+settings put global op_voice_recording_supported_by_mcc 1
+settings put global adb_enabled 1
+settings put global install_non_market_apps 1
+settings put global usb_mass_storage_enabled 1
 
-$pme 'com.android.vending/com.google.firebase.iid.FirebaseInstanceIdInternalReceiver' | tee -a $LOGGWL
-$pme 'com.android.vending/com.google.firebase.iid.FirebaseInstanceIdReceiver' | tee -a $LOGGWL
-$pme 'com.google.android.gms/com.google.android.gms.gcm.nts.SchedulerInternalReceiver' | tee -a $LOGGWL
-$pme 'com.google.android.gms/com.google.android.gms.gcm.nts.SchedulerReceiver' | tee -a $LOGGWL
-$pme 'com.google.android.gms/.update.SystemUpdateService' | tee -a $LOGGWL; sleep 1;
-$pme 'com.google.android.gms/com.google.android.gms.analytics.service.AnalyticsService' | tee -a $LOGGWL
-$pme 'com.google.android.gms/com.google.android.gms.analytics.AnalyticsService' | tee -a $LOGGWL
-$pme 'com.google.android.gms/com.google.android.gms.analytics.AnalyticsTaskService' | tee -a $LOGGWL
-$pme 'com.google.android.gms/com.google.android.gms.measurement.AppMeasurementJobService' | tee -a $LOGGWL
-$pme 'com.google.android.syncadapters.contacts/com.google.android.gms.analytics.AnalyticsJobService' | tee -a $LOGGWL
-$pme 'com.google.android.syncadapters.contacts/com.google.android.gms.analytics.AnalyticsService' | tee -a $LOGGWL
-$pme 'com.google.android.gms/com.google.android.gms.gcm.HeartbeatAlarm$ConnectionInfoPersistService' | tee -a $LOGGWL
-$pme 'com.google.android.gms/com.google.android.gms.chimera.PersistentIntentOperationService' | tee -a $LOGGWL
-$pmd 'com.google.android.gsf/.update.SystemUpdateService' | tee -a $LOGGWL
-$pmd 'com.android.vending/com.google.android.gms.measurement.AppMeasurementReceiver' | tee -a $LOGGWL
-$pmd 'com.google.android.gms/.update.SystemUpdateActivity' | tee -a $LOGGWL
-$pmd 'com.google.android.gms/.update.SystemUpdateService$ActiveReceiver' | tee -a $LOGGWL
-$pmd 'com.google.android.gms/.update.SystemUpdateService$Receiver' | tee -a $LOGGWL
-$pmd 'com.google.android.gms/.update.SystemUpdateService$SecretCodeReceiver' | tee -a $LOGGWL
-$pmd 'com.google.android.gms/com.google.android.gms.analytics.AnalyticsReceiver' | tee -a $LOGGWL
-$pmd 'com.google.android.gms/com.google.android.gms.measurement.AppMeasurementInstallReferrerReceiver' | tee -a $LOGGWL
-$pmd 'com.google.android.gms/com.google.android.gms.measurement.AppMeasurementReceiver' | tee -a $LOGGWL
-$pmd 'com.google.android.gms/com.google.android.gms.measurement.AppMeasurementService' | tee -a $LOGGWL
-$pmd 'com.google.android.gms/com.google.android.gms.measurement.PackageMeasurementReceiver' | tee -a $LOGGWL
-$pmd 'com.google.android.gms/com.google.android.gms.measurement.PackageMeasurementService' | tee -a $LOGGWL
-$pmd 'com.google.android.gms/com.google.android.gms.measurement.service.MeasurementBrokerService' | tee -a $LOGGWL
-$pmd 'com.google.android.gms/com.google.android.location.internal.AnalyticsSamplerReceiver' | tee -a $LOGGWL
-$pmd 'com.google.android.gsf/.update.SystemUpdateActivity' | tee -a $LOGGWL
-$pmd 'com.google.android.gsf/.update.SystemUpdatePanoActivity' | tee -a $LOGGWL
-$pmd 'com.google.android.gsf/.update.SystemUpdateService$Receiver' | tee -a $LOGGWL
-$pmd 'com.google.android.gsf/.update.SystemUpdateService$SecretCodeReceiver' | tee -a $LOGGWL
-$pmd 'com.google.android.gms/com.google.android.gms.analytics.service.AnalyticsService' | tee -a $LOGGWL
-$pmd 'com.google.android.gms/com.google.android.gms.analytics.AnalyticsService' | tee -a $LOGGWL
-$pmd 'com.google.android.gms/com.google.android.gms.analytics.AnalyticsTaskService' | tee -a $LOGGWL
-$pmd 'com.google.android.gms/com.google.android.gms.measurement.AppMeasurementJobService' | tee -a $LOGGWL
-$pmd 'com.google.android.syncadapters.contacts/com.google.android.gms.analytics.AnalyticsJobService' | tee -a $LOGGWL
-$pmd 'com.google.android.syncadapters.contacts/com.google.android.gms.analytics.AnalyticsService' | tee -a $LOGGWL
-$pmd 'com.google.android.gms/com.google.android.gms.gcm.HeartbeatAlarm$ConnectionInfoPersistService' | tee -a $LOGGWL
-$pmd 'com.google.android.gms/com.google.android.gms.chimera.PersistentIntentOperationService' | tee -a $LOGGWL
-
-kmsg2 "Applied Google Wakelocks Tweaks..."
+kmsg2 $(date) 
+kmsg2 "Applied some settings tweaks"
 kmsg2 "----"
-
-kmsg $(date) 
-kmsg "GWakelocks Tweaked."
-kmsg "----"
 
 kmsg $(date) 
 kmsg "Kernel and CPU Level Tweaks Started"
 kmsg "----"
 
 kmsg2 $(date) 
-kmsg2 "Kernel and CPU Level Tweaks"
+kmsg2 "Starting Kernel and CPU Level Tweaks"
 kmsg2 "----"
 
 am start -a android.intent.action.MAIN -e toasttext "Starting applying of Kernel/CPU/GPU Level Tweaks" -n mkadp.toast/.MainActivity
+
+# Fequency Rate Limit tweaks to all CPUs
+#ctl /sys/devices/system/cpu/cpu0/cpufreq/schedutil/down_rate_limit_us 100
+#ctl /sys/devices/system/cpu/cpu0/cpufreq/schedutil/up_rate_limit_us 75000
+#ctl /sys/devices/system/cpu/cpu0/cpufreq/schedutil/pl 0
+
+# CPUs down and Up time gaps at particular value
+ctl /sys/devices/system/cpu/cpu0/core_ctl/busy_down_thres 30
+ctl /sys/devices/system/cpu/cpu0/core_ctl/busy_up_thres 60
+
+ctl /sys/devices/system/cpu/cpu4/core_ctl/max_cpus 2
+ctl /sys/devices/system/cpu/cpu4/core_ctl/min_cpus 1
 
 # Other CPU tweaks
 #ctl /dev/cpuctl/cpu.shares 1024
@@ -346,6 +342,7 @@ ctl /proc/sys/net/core/optmem_max 20480
 ctl /proc/sys/net/core/netdev_max_backlog 2500
 ctl /proc/sys/net/unix/max_dgram_qlen 50
 
+
 # VMemory tweaks big improved balance between performance and battery life;
 ctl /proc/sys/vm/drop_caches 1
 ctl /proc/sys/vm/dirty_background_ratio 11
@@ -364,7 +361,7 @@ ctl /proc/sys/vm/vfs_cache_pressure 94
 ctl /proc/sys/vm/overcommit_ratio 50
 ctl /proc/sys/vm/extra_free_kbytes 24300
 ctl /proc/sys/kernel/random/read_wakeup_threshold 64
-ctl /proc/sys/kernel/random/write_wakeup_threshold 890
+ctl /proc/sys/kernel/random/write_wakeup_threshold 910
 ctl /sys/module/lowmemorykiller/parameters/minfree "21816,29088,36360,43632,50904,65448"
 ctl /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk 0
 
@@ -400,7 +397,7 @@ ctl /sys/module/ip6_tunnel/parameters/log_ecn_error N
 ctl /sys/module/subsystem_restart/parameters/enable_ramdumps 0
 ctl /sys/module/lowmemorykiller/parameters/debug_level 0
 ctl /sys/module/logger/parameters/log_mode 2
-ctl /sys/module/msm_show_resume_irq/parameters/debug_mask 0
+ctl /sys/module/msm_show_resume_irq/parameters/debug_mask 0 
 ctl /sys/module/msm_smd_pkt/parameters/debug_mask 0
 ctl /sys/module/sit/parameters/log_ecn_error N
 ctl /sys/module/smp2p/parameters/debug_mask 0
@@ -444,19 +441,18 @@ for i in /sys/devices/virtual/block/*/queue/iosched; do
  ctl $i/low_latency 0
 done
 
-
 for g in /sys/block/*/queue;
 do
 ctl "${g}"/add_random 0
 ctl "${g}"/iostats 0
 ctl "${g}"/nomerges 2
 ctl "${g}"/rotational 0
-ctl "${g}"/rq_affinity 0
+ctl "${g}"/rq_affinity 1
 ctl "${g}"/iosched/slice_idle 0
 ctl "${g}"/iosched/low_latency 0
 ctl "${g}"/scheduler cfq
-ctl "${g}"/read_ahead_kb 128
-ctl "${g}"/nr_requests 4096
+ctl "${g}"/read_ahead_kb 256
+ctl "${g}"/nr_requests 8192
 done
 
 #am start -a android.intent.action.MAIN -e toasttext "Applying Mount-Related Tweaks..." -n mkadp.toast/.MainActivity
@@ -474,11 +470,11 @@ done
 
 # Dev Stune Boost
 # Fast Sensivity in Game
-ctl /dev/stune/background/schedtune.boost 9
-ctl /dev/stune/foreground/schedtune.boost 9
+ctl /dev/stune/background/schedtune.boost 12
+ctl /dev/stune/foreground/schedtune.boost 12
 ctl /dev/stune/rt/schedtune.boost 0
 ctl /dev/stune/top-app/schedtune.boost 25
-ctl /dev/stune/schedtune.boost 5
+ctl /dev/stune/schedtune.boost 8
 ctl /dev/stune/nnapi-hal/schedtune.boost 0
 ctl /dev/stune/nnapi-hal/schedtune.prefer_idle 1
 ctl /dev/stune/top-app/schedtune.prefer_idle 1
@@ -488,10 +484,10 @@ ctl /dev/stune/rt/schedtune.prefer_idle 1
 ctl /dev/stune/schedtune.prefer_idle 1
 
 # Fs
-ctl /proc/sys/fs/lease-break-time 80
-ctl /proc/sys/kernel/perf_cpu_time_max_percent 95
-ctl /proc/sys/kernel/sched_min_task_util_for_colocation 1000
-ctl /proc/sys/kernel/sched_min_task_util_for_boost 1000
+ctl /proc/sys/fs/lease-break-time 15
+ctl /proc/sys/kernel/perf_cpu_time_max_percent 25
+ctl /proc/sys/kernel/sched_min_task_util_for_colocation 100
+ctl /proc/sys/kernel/sched_min_task_util_for_boost 100
 ctl /proc/sys/kernel/sched_child_runs_first 0
 ctl /proc/sys/kernel/sched_boost_top_app 0
 ctl /proc/sys/kernel/sched_walt_rotate_big_tasks 0
@@ -503,7 +499,7 @@ ctl /sys/module/boost_control/parameters/app_launch_boost_ms 0
 
 # GPU frequency based throttling;
 ctl /sys/class/kgsl/kgsl-3d0/throttling 1
-ctl /sys/class/kgsl/kgsl-3d0/default_pwrlevel 5
+ctl /sys/class/kgsl/kgsl-3d0/default_pwrlevel 4
 ctl /sys/class/kgsl/kgsl-3d0/bus_split 1
 
 #1028 readahead KB
@@ -521,10 +517,10 @@ ctl /sys/module/tcp_cubic/parameters/hystart_detect 2
 
 # Misc Kernel Teaks
 ctl /sys/kernel/debug/sched_features NO_NEXT_BUDDY
-ctl /sys/kernel/debug/sched_features NO_GENTLE_FAIR_SLEEPERS
 ctl /sys/kernel/debug/sched_features NO_TTWU_QUEUE
 ctl /sys/kernel/debug/sched_features NO_RT_RUNTIME_SHARE
 ctl /sys/kernel/debug/sched_features NO_AFFINE_WAKEUPS
+ctl /sys/kernel/debug/sched_features NO_GENTLE_FAIR_SLEEPERS
 
 for cpu in /sys/devices/system/cpu/*/sched_load_boost
 do
@@ -539,9 +535,9 @@ do
     ctl "$boost"/powerkey_input_boost_ms 0
 done
 
-chmod -h 644 /sys/module/lowmemorykiller/parameters/cost
+chmod  644 /sys/module/lowmemorykiller/parameters/cost
 ctl /sys/module/lowmemorykiller/parameters/cost 16
-chmod -h 644 /sys/module/lowmemorykiller/parameters/adj
+chmod  644 /sys/module/lowmemorykiller/parameters/adj
 ctl /sys/module/lowmemorykiller/parameters/adj "0,1,2,4,7,15"
 
 
@@ -608,8 +604,7 @@ ctl /proc/sys/fs/inotify/max_queued_events 131072
 ctl /proc/sys/fs/inotify/max_user_watches 131072
 ctl /proc/sys/fs/inotify/max_user_instances 1024
 
-#BAT2
-
+#BAL2
 ctl /proc/sys/kernel/sched_boost 1
 ctl /sys/module/cpu_boost/parameters/input_boost_freq "0:1036800 2:1036800"
 ctl /sys/module/cpu_boost/parameters/input_boost_ms 500
@@ -632,201 +627,197 @@ ctl /sys/devices/system/cpu/cpu2/online 1
 ctl /sys/devices/system/cpu/cpu3/online 1
 ctl /sys/devices/system/cpu/cpu4/online 1
 ctl /sys/devices/system/cpu/cpu5/online 1
-ctl /sys/devices/system/cpu/cpu6/online 0
-ctl /sys/devices/system/cpu/cpu7/online 0
+ctl /sys/devices/system/cpu/cpu6/online 1
+ctl /sys/devices/system/cpu/cpu7/online 1
 
-ctl /proc/sys/kernel/sched_boost 0
-ctl /sys/module/cpu_boost/parameters/input_boost_freq "0:1036800 2:1036800"
-ctl /sys/module/cpu_boost/parameters/input_boost_ms 500
-ctl /sys/module/cpu_boost/parameters/input_boost_enabled 0
-ctl /sys/class/kgsl/kgsl-3d0/default_pwrlevel 7
-ctl /sys/class/kgsl/kgsl-3d0/devfreq/governor powersave
-ctl /sys/class/kgsl/kgsl-3d0/devfreq/adrenoboost 0
-ctl /sys/block/dm-0/queue/scheduler "noop"
-ctl /sys/block/dm-1/queue/scheduler "noop"
-ctl /sys/block/sda/queue/scheduler "noop"
-ctl /sys/block/sde/queue/scheduler "noop"
-ctl /sys/block/dm-0/queue/read_ahead_kb 2048
-ctl /sys/block/dm-1/queue/read_ahead_kb 2048
-ctl /sys/block/sda/queue/read_ahead_kb 2048
-ctl /sys/block/sde/queue/read_ahead_kb 2048
-
-# Force cluster CPUs
+# Force little cluster CPUs Governor to conservative
 ctl /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor conservative
 ctl /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor conservative
 ctl /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor conservative
 ctl /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor conservative
-ctl /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor powersave
-ctl /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor powersave
-ctl /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor powersave
-ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor powersave
+ctl /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor schedutil
+ctl /sys/devices/system/cpu/cpu5/cpufreq/scaling_governor schedutil
+ctl /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor schedutil
+ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_governor schedutil
 ctl /sys/devices/system/cpu/cpufreq/policy0/scaling_governor conservative
-ctl /sys/devices/system/cpu/cpufreq/policy4/scaling_governor powersave
-ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_governor powersave
+ctl /sys/devices/system/cpu/cpufreq/policy4/scaling_governor schedutil
+ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_governor schedutil
 
-ctl /sys/kernel/gpu/gpu_governor powersave
+ctl /sys/kernel/gpu/gpu_governor simple_ondemand
 ctl /sys/module/adreno_idler/parameters/adreno_idler_active 1
-ctl /sys/module/lazyplug/parameters/nr_possible_cores 6
+ctl /sys/module/lazyplug/parameters/nr_possible_cores 8
 ctl /sys/module/msm_performance/parameters/touchboost 0
 ctl /dev/cpuset/foreground/boost/cpus 0-3
-ctl /dev/cpuset/foreground/cpus 0-5
-ctl /dev/cpuset/top-app/cpus 0-5
+ctl /dev/cpuset/foreground/cpus 0-7
+ctl /dev/cpuset/top-app/cpus 0-6
 DEVICE="$(getprop vendor.product.device)"
 if [[ "$DEVICE" == guacamole ]]; then
 am start -a android.intent.action.MAIN -e toasttext "Device detected OP7Pro" -n mkadp.toast/.MainActivity
-	ctl /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 300000
-	ctl /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 300000
-	ctl /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 300000
-	ctl /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq 300000
-	ctl /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq 300000
 
-	ctl /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 2131200
+	ctl /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 2227200
 	ctl /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 710400
-	ctl /sys/devices/system/cpu/cpu5/cpufreq/scaling_max_freq 2131200
+	ctl /sys/devices/system/cpu/cpu5/cpufreq/scaling_max_freq 2227200
 	ctl /sys/devices/system/cpu/cpu5/cpufreq/scaling_min_freq 710400
-	ctl /sys/devices/system/cpu/cpu6/cpufreq/scaling_max_freq 2131200
+	ctl /sys/devices/system/cpu/cpu6/cpufreq/scaling_max_freq 2227200
 	ctl /sys/devices/system/cpu/cpu6/cpufreq/scaling_min_freq 710400
-	ctl /sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq 2131200
+	ctl /sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq 2227200
 	ctl /sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq 710400
 
-	ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq 1990000
-	ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq 210400
-	ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq 1990000
-	ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq 210400
+	ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq 2540000
+	ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq 510400
+	ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq 2540000
+	ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq 510400
 fi
 
 if [[ "$DEVICE" == guacamoleb ]]; then
 am start -a android.intent.action.MAIN -e toasttext "Device detected OP7" -n mkadp.toast/.MainActivity
-	ctl /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 300000
-	ctl /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 300000
-	ctl /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 300000
-	ctl /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq 300000
-	ctl /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq 300000
 
-	ctl /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 2131200
+	ctl /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 2227200
 	ctl /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 710400
-	ctl /sys/devices/system/cpu/cpu5/cpufreq/scaling_max_freq 2131200
+	ctl /sys/devices/system/cpu/cpu5/cpufreq/scaling_max_freq 2227200
 	ctl /sys/devices/system/cpu/cpu5/cpufreq/scaling_min_freq 710400
-	ctl /sys/devices/system/cpu/cpu6/cpufreq/scaling_max_freq 2131200
+	ctl /sys/devices/system/cpu/cpu6/cpufreq/scaling_max_freq 2227200
 	ctl /sys/devices/system/cpu/cpu6/cpufreq/scaling_min_freq 710400
-	ctl /sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq 2131200
+	ctl /sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq 2227200
 	ctl /sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq 710400
 
-	ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq 1990000
-	ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq 210400
-	ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq 1990000
-	ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq 210400
+	ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq 2540000
+	ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq 510400
+	ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq 2540000
+	ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq 510400
 fi
 
 if [[ "$DEVICE" == hotdog ]]; then
 am start -a android.intent.action.MAIN -e toasttext "Device detected OP7TPro" -n mkadp.toast/.MainActivity
-	ctl /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 300000
-	ctl /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 300000
-	ctl /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 300000
-	ctl /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq 300000
-	ctl /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq 300000
 
-	ctl /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 2131200
+	ctl /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 2227200
 	ctl /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 710400
-	ctl /sys/devices/system/cpu/cpu5/cpufreq/scaling_max_freq 2131200
+	ctl /sys/devices/system/cpu/cpu5/cpufreq/scaling_max_freq 2227200
 	ctl /sys/devices/system/cpu/cpu5/cpufreq/scaling_min_freq 710400
-	ctl /sys/devices/system/cpu/cpu6/cpufreq/scaling_max_freq 2131200
+	ctl /sys/devices/system/cpu/cpu6/cpufreq/scaling_max_freq 2227200
 	ctl /sys/devices/system/cpu/cpu6/cpufreq/scaling_min_freq 710400
-	ctl /sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq 2131200
+	ctl /sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq 2227200
 	ctl /sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq 710400
 
-	ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq 1990000
-	ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq 210400
-	ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq 2110000
-	ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq 210400
+	ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq 2660000
+	ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq 510400
+	ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq 2660000
+	ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq 510400
 fi
 
 if [[ "$DEVICE" == hotdogg ]]; then
-am start -a android.intent.action.MAIN -e toasttext "Device detected OP7TProMclrn" -n mkadp.toast/.MainActivity
-	ctl /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1382400
+am start -a android.intent.action.MAIN -e toasttext "Device detected OP7TMclPro" -n mkadp.toast/.MainActivity
+	ctl /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 300000
-	ctl /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 300000
-	ctl /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 300000
-	ctl /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq 300000
-	ctl /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq 300000
 
-	ctl /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 2131200
+	ctl /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 2227200
 	ctl /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 710400
-	ctl /sys/devices/system/cpu/cpu5/cpufreq/scaling_max_freq 2131200
+	ctl /sys/devices/system/cpu/cpu5/cpufreq/scaling_max_freq 2227200
 	ctl /sys/devices/system/cpu/cpu5/cpufreq/scaling_min_freq 710400
-	ctl /sys/devices/system/cpu/cpu6/cpufreq/scaling_max_freq 2131200
+	ctl /sys/devices/system/cpu/cpu6/cpufreq/scaling_max_freq 2227200
 	ctl /sys/devices/system/cpu/cpu6/cpufreq/scaling_min_freq 710400
-	ctl /sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq 2131200
+	ctl /sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq 2227200
 	ctl /sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq 710400
 
-	ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq 1990000
-	ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq 210400
-	ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq 2110000
-	ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq 210400
+	ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq 2660000
+	ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq 510400
+	ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq 2660000
+	ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq 510400
 fi
 
 if [[ "$DEVICE" == hotdogb ]]; then
 am start -a android.intent.action.MAIN -e toasttext "Device detected OP7T" -n mkadp.toast/.MainActivity
-	ctl /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 300000
-	ctl /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpu1/cpufreq/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpu1/cpufreq/scaling_min_freq 300000
-	ctl /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 300000
-	ctl /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpu3/cpufreq/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpu3/cpufreq/scaling_min_freq 300000
-	ctl /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq 1382400
+	ctl /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq 1478400
 	ctl /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq 300000
 
-	ctl /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 2131200
+	ctl /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 2227200
 	ctl /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 710400
-	ctl /sys/devices/system/cpu/cpu5/cpufreq/scaling_max_freq 2131200
+	ctl /sys/devices/system/cpu/cpu5/cpufreq/scaling_max_freq 2227200
 	ctl /sys/devices/system/cpu/cpu5/cpufreq/scaling_min_freq 710400
-	ctl /sys/devices/system/cpu/cpu6/cpufreq/scaling_max_freq 2131200
+	ctl /sys/devices/system/cpu/cpu6/cpufreq/scaling_max_freq 2227200
 	ctl /sys/devices/system/cpu/cpu6/cpufreq/scaling_min_freq 710400
-	ctl /sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq 2131200
+	ctl /sys/devices/system/cpu/cpufreq/policy4/scaling_max_freq 2227200
 	ctl /sys/devices/system/cpu/cpufreq/policy4/scaling_min_freq 710400
 
-	ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq 1990000
-	ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq 210400
-	ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq 2110000
-	ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq 210400
+	ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq 2660000
+	ctl /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq 510400
+	ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_max_freq 2660000
+	ctl /sys/devices/system/cpu/cpufreq/policy7/scaling_min_freq 510400
 fi
 
-ctl /sys/devices/system/cpu/cpu0/core_ctl/busy_down_thres 25
-ctl /sys/devices/system/cpu/cpu0/core_ctl/busy_up_thres 60
-ctl /sys/devices/system/cpu/cpu4/core_ctl/busy_down_thres 25
-ctl /sys/devices/system/cpu/cpu4/core_ctl/busy_up_thres 60
-ctl /sys/devices/system/cpu/cpu7/core_ctl/busy_down_thres 25
-ctl /sys/devices/system/cpu/cpu7/core_ctl/busy_up_thres 60
+ctl /sys/devices/system/cpu/cpu0/core_ctl/busy_down_thres 40
+ctl /sys/devices/system/cpu/cpu0/core_ctl/busy_up_thres 0
+ctl /sys/devices/system/cpu/cpu4/core_ctl/busy_down_thres 40
+ctl /sys/devices/system/cpu/cpu4/core_ctl/busy_up_thres 0
+ctl /sys/devices/system/cpu/cpu7/core_ctl/busy_down_thres 40
+ctl /sys/devices/system/cpu/cpu7/core_ctl/busy_up_thres 0
+
+ctl /sys/devices/system/cpu/cpu0/cpufreq/schedutil/down_rate_limit_us 100
+ctl /sys/devices/system/cpu/cpu0/cpufreq/schedutil/up_rate_limit_us 50000
+ctl /sys/devices/system/cpu/cpu0/cpufreq/schedutil/pl 0
+
+ctl /sys/devices/system/cpu/cpu4/cpufreq/schedutil/down_rate_limit_us 100
+ctl /sys/devices/system/cpu/cpu4/cpufreq/schedutil/up_rate_limit_us 80000
+ctl /sys/devices/system/cpu/cpu4/cpufreq/schedutil/pl 0
+
+ctl /sys/devices/system/cpu/cpu7/cpufreq/schedutil/down_rate_limit_us 100
+ctl /sys/devices/system/cpu/cpu7/cpufreq/schedutil/up_rate_limit_us 90000
+ctl /sys/devices/system/cpu/cpu7/cpufreq/schedutil/pl 0
 
 ctl /sys/devices/system/cpu/cpu0/core_ctl/max_cpus 4
-ctl /sys/devices/system/cpu/cpu0/core_ctl/min_cpus 1
-ctl /sys/devices/system/cpu/cpu4/core_ctl/max_cpus 2
+ctl /sys/devices/system/cpu/cpu0/core_ctl/min_cpus 2
+ctl /sys/devices/system/cpu/cpu4/core_ctl/max_cpus 3
 ctl /sys/devices/system/cpu/cpu4/core_ctl/min_cpus 1
-ctl /sys/devices/system/cpu/cpu7/core_ctl/max_cpus 0
-ctl /sys/devices/system/cpu/cpu7/core_ctl/min_cpus 0
+ctl /sys/devices/system/cpu/cpu7/core_ctl/max_cpus 1
+ctl /sys/devices/system/cpu/cpu7/core_ctl/min_cpus 1
 
-am start -a android.intent.action.MAIN -e toasttext "Finally...Kernel/CPU/GPU Tweaks Applied" -n mkadp.toast/.MainActivity
+am start -a android.intent.action.MAIN -e toasttext "Finally...Kernel/CPU/GPU Level Tweaks Applied" -n mkadp.toast/.MainActivity
 
 kmsg2 $(date) 
 kmsg2 "Applied..."
@@ -862,7 +853,7 @@ kmsg2 "----"
 
 kmsg2 $(date) 
 kmsg2 "All Done."
-kmsg2 "Enjoy Battery"
+kmsg2 "Enjoy Balanced Profile"
 kmsg2 "----"
 
 # Push a semi-needed log to the internal storage with a "report" if the script could be executed or not;
@@ -870,13 +861,12 @@ kmsg $(date)
 kmsg "MKADP HAS EXECUTED TASK SUCCESSFULLY. ENJOY!" 
 
 kmsg3 $(date) 
-kmsg3 "Battery-Profile Enabled manually"
+kmsg3 "Balanced-Profile Enabled manually"
 kmsg3 "----"
 
-$BB cp -rf /data/media/0/Android/.libbin/.mkadpshshsh/YourBLchanges.log /data/data/com.mkadp.oxyplus/files/YourBLchanges.log
-chmod 644 /data/data/com.mkadp.oxyplus/files/YourBLchanges.log
+$BB rm -rf /cache/*	
 
-$BB rm -rf /cache/*
+am start -a android.intent.action.MAIN -e toasttext "All Done. Thankyou for your patience" -n mkadp.toast/.MainActivity
 
 dumpsys deviceidle enable all;
 dumpsys deviceidle enabled all;
@@ -886,4 +876,5 @@ dumpsys deviceidle force-idle
 settings put global aggressive_idle_enabled "1"
 settings put global aggressive_standby_enabled "1"
 
+am start -n com.mkadp.oxyplus/.activities.LogsActivity
 exit 0
