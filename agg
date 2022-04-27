@@ -16,10 +16,10 @@ BRANCH="Aggressive-Profile"
 NEWLOG2=/data/media/0/.mkadp.log
 LOGFU=/data/media/0/butterlimits.log
 #=======================================#
-LOG2=/data/data/com.mkadp.oxyplus/files/butterlimits.log
-LOG2A=/data/data/com.mkadp.oxyplus/files/zbutterlimits.log
-LOG2B=/data/data/com.mkadp.oxyplus/files/zzbutterlimits.log
-FILEZERO=/data/data/com.mkadp.oxyplus/files/scrpt.sh
+LOG2=/data/data/com.mkadp.oxyplusd/files/butterlimits.log
+LOG2A=/data/data/com.mkadp.oxyplusd/files/zbutterlimits.log
+LOG2B=/data/data/com.mkadp.oxyplusd/files/zzbutterlimits.log
+FILEZERO=/data/data/com.mkadp.oxyplusd/files/scrpt.sh
 pme='pm enable'
 pmd='pm disable'
 #=======================================#
@@ -758,5 +758,5 @@ $BB rm -rf /cache/*
  su -lp 2000 -c "cmd notification post -S bigtext -t 'OxyPlus Descrete' 'Tag' 'Aggressive Profile finished applying
  At $(date)'"
 
-am start -n com.mkadp.oxyplus/.activities.LogsActivity
+am start -n com.mkadp.oxyplusd/.activities.LogsActivity
 exit 0
