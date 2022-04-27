@@ -16,7 +16,7 @@ BRANCH="Battery-Profile"
 LOG2=/data/data/com.mkadp.oxyplusd/files/butterlimits.log
 LOG2A=/data/data/com.mkadp.oxyplusd/files/zbutterlimits.log
 LOG2B=/data/data/com.mkadp.oxyplusd/files/zzbutterlimits.log
-FILEZERO=/data/data/com.mkadp.oxyplus/files/scrpt.sh
+FILEZERO=/data/data/com.mkadp.oxyplusd/files/scrpt.sh
 pme='pm enable'
 pmd='pm disable'
 #=======================================#
