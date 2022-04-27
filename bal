@@ -15,11 +15,11 @@ LOGFU=/data/media/0/butterlimits.log
 #=======================================#
 LOGBL1=/data/media/0/.mkadp.log
 LOGBL2=/data/media/0/butterlimits.log
-LOG2=/data/data/com.mkadp.oxyplus/files/butterlimits.log
-LOG2A=/data/data/com.mkadp.oxyplus/files/zbutterlimits.log
-LOG2B=/data/data/com.mkadp.oxyplus/files/zzbutterlimits.log
+LOG2=/data/data/com.mkadp.oxyplusd/files/butterlimits.log
+LOG2A=/data/data/com.mkadp.oxyplusd/files/zbutterlimits.log
+LOG2B=/data/data/com.mkadp.oxyplusd/files/zzbutterlimits.log
 LOGGWL=/data/media/0/Android/.libbin/mkadplogs/gwl.log
-FILEZERO=/data/data/com.mkadp.oxyplus/files/scrpt.sh
+FILEZERO=/data/data/com.mkadp.oxyplusd/files/scrpt.sh
 pme='pm enable'
 pmd='pm disable'
 #=======================================#
@@ -876,5 +876,5 @@ dumpsys deviceidle force-idle
 settings put global aggressive_idle_enabled "1"
 settings put global aggressive_standby_enabled "1"
 
-am start -n com.mkadp.oxyplus/.activities.LogsActivity
+am start -n com.mkadp.oxyplusd/.activities.LogsActivity
 exit 0
