@@ -1,4 +1,7 @@
  #!/system/bin/sh
+ 
+ su -lp 2000 -c "cmd notification post -S bigtext -t 'OxyPlus Descrete' 'Tag' 'Balanced Profile started appying
+ At $(date)'"
 
 #=======================================#
 #VARIABLES===============================#
@@ -860,6 +863,9 @@ dumpsys deviceidle enabled;
 dumpsys deviceidle force-idle
 settings put global aggressive_idle_enabled "1"
 settings put global aggressive_standby_enabled "1"
+
+ su -lp 2000 -c "cmd notification post -S bigtext -t 'OxyPlus Descrete' 'Tag' 'Balanced Profile applied without any error
+ At $(date)'"
 
 am start -n com.mkadp.oxyplusd/.activities.LogsActivity
 exit 0
