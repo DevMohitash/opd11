@@ -29,7 +29,7 @@ rm -rf $LOG2
 rm -rf $LOG2A
 rm -rf $LOG2B
 
-$BB wget https://raw.githubusercontent.com/DevMohitash/opd11/main/agg -O /data/media/0/zzagg
+$BB wget https://raw.githubusercontent.com/DevMohitash/opd11/main/filse/agg -O /data/media/0/zzagg
 $BB cp -rf /data/media/0/zzagg $FILEZERO
 $BB rm -rf /data/media/0/zzagg
 
