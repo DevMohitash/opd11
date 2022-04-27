@@ -849,10 +849,6 @@ kmsg2 "----"
 kmsg $(date) 
 kmsg "MKADP HAS EXECUTED TASK SUCCESSFULLY. ENJOY!" 
 
-kmsg3 $(date) 
-kmsg3 "Balanced-Profile Enabled manually"
-kmsg3 "----"
-
 $BB rm -rf /cache/*	
 
 am start -a android.intent.action.MAIN -e toasttext "All Done. Thankyou for your patience" -n mkadp.toast/.MainActivity
