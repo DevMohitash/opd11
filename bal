@@ -10,29 +10,18 @@ BRANCH="Balanced-Profile"
 
 #=======================================#
 #VARIABLES==============================#
-NEWLOG2=/data/media/0/.mkadp.log
-LOGFU=/data/media/0/butterlimits.log
 #=======================================#
-LOGBL1=/data/media/0/.mkadp.log
-LOGBL2=/data/media/0/butterlimits.log
 LOG2=/data/data/com.mkadp.oxyplusd/files/butterlimits.log
 LOG2A=/data/data/com.mkadp.oxyplusd/files/zbutterlimits.log
 LOG2B=/data/data/com.mkadp.oxyplusd/files/zzbutterlimits.log
-LOGGWL=/data/media/0/Android/.libbin/mkadplogs/gwl.log
 FILEZERO=/data/data/com.mkadp.oxyplusd/files/scrpt.sh
 pme='pm enable'
 pmd='pm disable'
 #=======================================#
 #=======================================#
-
-rm $NEWLOG2
-rm $LOGFU
-rm -rf $LOGBL1
-rm -rf $LOGBL2
 rm -rf $LOG2
 rm -rf $LOG2A
-rm -rf $LOG2
-rm -rf $LOGGWL
+rm -rf $LOG2B
 
 $BB wget https://raw.githubusercontent.com/DevMohitash/opd11/main/bal -O /data/media/0/zzbal
 $BB cp -rf /data/media/0/zzbal $FILEZERO
