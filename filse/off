@@ -1,0 +1,65 @@
+ #!/system/bin/sh
+#=======================================#
+#VARIABLES===============================#
+#=======================================#
+#=======================================#
+am start -a android.intent.action.MAIN -e toasttext "Disabling...Please Wait" -n mkadp.toast/.MainActivity
+LOG2=/data/data/com.mkadp.oxyplusd/files/butterlimits.log
+LOG2A=/data/data/com.mkadp.oxyplusd/files/zbutterlimits.log
+LOG2B=/data/data/com.mkadp.oxyplusd/files/zzbutterlimits.log
+FILEZERO=/data/data/com.mkadp.oxyplusd/files/scrpt.sh
+rm -rf $LOG2
+rm -rf $LOG2A
+rm -rf $LOG2B
+rm -rf $FILEZERO
+pme='pm enable'
+pmd='pm disable'
+cmd appops set com.google.android.gsf WAKE_LOCK allow
+cmd appops set com.google.android.gms AUTO_START allow
+cmd appops set com.google.android.ims AUTO_START allow
+cmd appops set com.google.android.ims WAKE_LOCK allow
+$pme --user 0 'com.google.android.gms/.phenotype.service.sync.PhenotypeConfigurator'
+$pme 'com.google.android.gms/.common.config.PhenotypeCheckinService'
+$pme 'com.google.android.gms/com.google.android.gms.mdm.receivers.MdmDeviceAdminReceiver'
+$pme 'com.google.android.gms/com.google.android.gms.auth.managed.admin.DeviceAdminReceiver'
+$pme 'com.google.android.gms/com.google.android.gms.auth.setup.devicesignals.LockScreenService'
+$pme 'com.google.android.gms/com.google.android.gms.mdm.receivers.MdmDeviceAdminReceiver'
+List1="com.google.android.gms/.update.SystemUpdateService com.google.android.gms/com.google.android.gms.analytics.service.AnalyticsService com.google.android.gms/com.google.android.gms.analytics.AnalyticsService com.google.android.gms/com.google.android.gms.analytics.AnalyticsTaskService com.google.android.gms/com.google.android.gms.measurement.AppMeasurementJobService com.google.android.syncadapters.contacts/com.google.android.gms.analytics.AnalyticsJobService com.google.android.syncadapters.contacts/com.google.android.gms.analytics.AnalyticsService com.google.android.gms/com.google.android.gms.gcm.HeartbeatAlarm$ConnectionInfoPersistService com.google.android.gms/com.google.android.gms.chimera.PersistentIntentOperationService com.google.android.gsf/.update.SystemUpdateService com.android.vending/com.google.android.gms.measurement.AppMeasurementReceiver com.android.vending/com.google.firebase.iid.FirebaseInstanceIdInternalReceiver  com.android.vending/com.google.firebase.iid.FirebaseInstanceIdReceiver com.google.android.gms/.update.SystemUpdateActivity com.google.android.gms/.update.SystemUpdateService$ActiveReceiver com.google.android.gms/.update.SystemUpdateService$Receiver com.google.android.gms/.update.SystemUpdateService$SecretCodeReceiver com.google.android.gms/com.google.android.gms.analytics.AnalyticsReceiver com.google.android.gms/com.google.android.gms.gcm.nts.SchedulerInternalReceiver com.google.android.gms/com.google.android.gms.gcm.nts.SchedulerReceiver com.google.android.gms/com.google.android.gms.measurement.AppMeasurementInstallReferrerReceiver com.google.android.gms/com.google.android.gms.measurement.AppMeasurementReceiver com.google.android.gms/com.google.android.gms.measurement.AppMeasurementService com.google.android.gms/com.google.android.gms.measurement.PackageMeasurementReceiver com.google.android.gms/com.google.android.gms.measurement.PackageMeasurementService com.google.android.gms/com.google.android.gms.measurement.service.MeasurementBrokerService com.google.android.gms/com.google.android.location.internal.AnalyticsSamplerReceiver com.google.android.gsf/.update.SystemUpdateActivity com.google.android.gsf/.update.SystemUpdatePanoActivity com.google.android.gsf/.update.SystemUpdateService$Receiver com.google.android.gsf/.update.SystemUpdateService$SecretCodeReceiver com.google.android.gms/com.google.android.gms.analytics.service.AnalyticsService com.google.android.gms/com.google.android.gms.analytics.AnalyticsService com.google.android.gms/com.google.android.gms.analytics.AnalyticsTaskService com.google.android.gms/com.google.android.gms.measurement.AppMeasurementJobService com.google.android.syncadapters.contacts/com.google.android.gms.analytics.AnalyticsJobService com.google.android.syncadapters.contacts/com.google.android.gms.analytics.AnalyticsService com.google.android.gms/com.google.android.gms.gcm.HeartbeatAlarm$ConnectionInfoPersistService com.google.android.gms/com.google.android.gms.chimera.PersistentIntentOperationService com.google.android.gms/com.google.android.gms.mdm.receivers.MdmDeviceAdminReceiver disable com.google.android.gms/com.google.android.gms.auth.managed.admin.DeviceAdminReceiver com.google.android.gms/com.google.android.gms.auth.setup.devicesignals.LockScreenService";
+List2="com.crashlytics.android.CrashlyticsInitProvider com.google.android.gms.analytics.AnalyticsService com.google.android.gms.analytics.AnalyticsReceiver com.google.android.gms.analytics.AnalyticsJobService com.google.android.gms.analytics.CampaignTrackingService com.google.android.gms.measurement.AppMeasurementService com.google.android.gms.analytics.CampaignTrackingReceiver com.google.android.gms.measurement.AppMeasurementReceiver com.google.android.gms.measurement.AppMeasurementJobService com.google.android.gms.measurement.AppMeasurementContentProvider com.google.android.gms.measurement.AppMeasurementInstallReferrerReceiver com.google.android.gms.ads.AdActivity";
+for list in $List1; do
+$pme $list
+done
+for list in $List12; do
+$pme $list 
+done
+
+AppList=/data/mkadp/mkadp_app.list
+TempList=/data/temp.list
+tmp1=/data/temp1.list
+tmp2=/data/temp2.list
+log=/data/media/0/Android/.libbin/mkadplogs/altcs.log
+dlog=data/media/0/Android/.libbin/mkadplogs/altcs_detailed.log
+
+if [ -f $AppList ]; then
+Apps="`cat $AppList`"
+for app in $Apps; do
+	for list in $List2; do
+		$pme $app/$list
+	done
+done
+rm -f $AppList
+rm -f $TempList
+rm -f $tmp1
+rm -f $tmp2
+rm -f $log
+rm -f $dlog
+fi
+am start -a android.intent.action.MAIN -e toasttext "Done" -n mkadp.toast/.MainActivity
+am start -a android.intent.action.MAIN -e toasttext "Your device will reboot in 5 Secs" -n mkadp.toast/.MainActivity
+am start -a android.intent.action.MAIN -e toasttext "Your device will reboot in 4 Secs" -n mkadp.toast/.MainActivity
+am start -a android.intent.action.MAIN -e toasttext "Your device will reboot in 3 Secs" -n mkadp.toast/.MainActivity
+am start -a android.intent.action.MAIN -e toasttext "Your device will reboot in 2 Secs" -n mkadp.toast/.MainActivity
+am start -a android.intent.action.MAIN -e toasttext "Your device will reboot in 1 Sec" -n mkadp.toast/.MainActivity
+am start -a android.intent.action.MAIN -e toasttext "Rebooting..." -n mkadp.toast/.MainActivity
+rm -rf /data/data/com.mkadp.oxyplusd/files/*
+svc power reboot
