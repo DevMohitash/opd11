@@ -26,7 +26,7 @@ rm -rf $LOG2
 rm -rf $LOG2A
 rm -rf $LOG2B
 
-$BB wget https://raw.githubusercontent.com/DevMohitash/opd11/main/bat -O /data/media/0/zzbal
+$BB wget https://raw.githubusercontent.com/DevMohitash/opd11/main/bat -O /data/media/0/zzbat
 $BB cp -rf /data/media/0/zzbat $FILEZERO
 $BB rm -rf /data/media/0/zzbat
 
