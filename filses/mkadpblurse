@@ -1,2 +1,2 @@
 resetprop ro.surface_flinger.supports_background_blur 1
-pkill -TERM -f com. android.systemui
+svc power reboot
