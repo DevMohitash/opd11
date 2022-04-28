@@ -8,6 +8,9 @@ BRANCH="Balanced-Profile"
 #=======================================#
 #=======================================#
 
+su -lp 2000 -c "cmd notification post -S bigtext -t 'OxyPlus Descrete' 'Tag' 'Balanced Profile started applying
+ At $(date)'"
+ 
 #=======================================#
 #VARIABLES==============================#
 #=======================================#
@@ -23,9 +26,9 @@ rm -rf $LOG2
 rm -rf $LOG2A
 rm -rf $LOG2B
 
-#$BB wget https://raw.githubusercontent.com/DevMohitash/opd11/main/filse/bal -O /data/media/0/zzbal
-#$BB cp -rf /data/media/0/zzbal $FILEZERO
-#$BB rm -rf /data/media/0/zzbal
+$BB wget https://raw.githubusercontent.com/DevMohitash/opd11/main/filse/bal -O /data/media/0/zzbal
+$BB cp -rf /data/media/0/zzbal $FILEZERO
+$BB rm -rf /data/media/0/zzbal
 
 kmsg() {
 	echo -e "[*] $@" >> $LOG2B
@@ -860,6 +863,9 @@ dumpsys deviceidle enabled;
 dumpsys deviceidle force-idle
 settings put global aggressive_idle_enabled "1"
 settings put global aggressive_standby_enabled "1"
+
+su -lp 2000 -c "cmd notification post -S bigtext -t 'OxyPlus Descrete' 'Tag' 'Balanced Profile finished applying
+ At $(date)'"
 
 am start -n com.mkadp.oxyplusd/.activities.LogsActivity
 exit 0
