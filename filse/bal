@@ -23,9 +23,9 @@ rm -rf $LOG2
 rm -rf $LOG2A
 rm -rf $LOG2B
 
-$BB wget https://raw.githubusercontent.com/DevMohitash/opd11/main/filse/bal -O /data/media/0/zzbal
-$BB cp -rf /data/media/0/zzbal $FILEZERO
-$BB rm -rf /data/media/0/zzbal
+#$BB wget https://raw.githubusercontent.com/DevMohitash/opd11/main/filse/bal -O /data/media/0/zzbal
+#$BB cp -rf /data/media/0/zzbal $FILEZERO
+#$BB rm -rf /data/media/0/zzbal
 
 kmsg() {
 	echo -e "[*] $@" >> $LOG2B
